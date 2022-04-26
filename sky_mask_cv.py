@@ -105,7 +105,7 @@ def energy_optimization(img, gradient, thresh_min=5, thresh_max=600, n=120):
 
 def check_no_sky(img, b, thresh1=None, thresh2=None, thresh3=5):
     """
-    Heuristics to check if there is actually a sky
+    Heuristic to check if there is actually a sky
 
     :param img: image
     :param b: border
@@ -132,7 +132,7 @@ def check_no_sky(img, b, thresh1=None, thresh2=None, thresh3=5):
 
 def check_fake_sky(img, b, thresh4=None):
     """
-    Heuristics to check if the border really separates the sky from the ground
+    Heuristic to check if the border really separates the sky from the ground
 
     :param img: image
     :param b: border
