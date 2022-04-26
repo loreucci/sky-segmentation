@@ -10,6 +10,8 @@ def create_sky_mask(img, networkpath="saved_unet.pth"):
     """
     Compute sky mask by using a pretrained Unet CNN
 
+    Multiple calls to this function with the same networkpath will result in only one loading of the network.
+
     :param img: image (must be 256x256)
     :param networkpath: path to network weights
     :return: binary sky mask
@@ -18,11 +20,14 @@ def create_sky_mask(img, networkpath="saved_unet.pth"):
         device = torch.device("cuda")
     else:
         device = torch.device("cpu")
-    model = smp.Unet("resnet18", encoder_weights=None, classes=1, activation=None)
-    model.to(device)
-    model.eval()
-    state = torch.load(networkpath, map_location=lambda storage, loc: storage)
-    model.load_state_dict(state["params"])
+    if create_sky_mask.model is None:
+        create_sky_mask.model = smp.Unet("resnet18", encoder_weights=None, classes=1, activation=None)
+        create_sky_mask.model.to(device)
+        create_sky_mask.model.eval()
+    if create_sky_mask.model_path != networkpath:
+        state = torch.load(networkpath, map_location=lambda storage, loc: storage)
+        create_sky_mask.model.load_state_dict(state["params"])
+        create_sky_mask.model_path = networkpath
 
     # convert image to tensor
     img = img.copy()
@@ -37,13 +42,18 @@ def create_sky_mask(img, networkpath="saved_unet.pth"):
     # run network
     img_t = torch.from_numpy(img)
     img_t = img_t.to(device)
-    out = model(img_t)
+    out = create_sky_mask.model(img_t)
 
     # convert output to binary mask
     mask_np = out.detach().cpu().numpy().reshape((256, 256))
     mask_np[mask_np < 0.5] = 0
     mask_np[mask_np >= 0.5] = 255
     return np.array(mask_np, dtype=np.uint8)
+
+
+# static variables to avoid loading twice the same network
+create_sky_mask.model = None
+create_sky_mask.model_path = None
 
 
 def main():
