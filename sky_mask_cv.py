@@ -202,7 +202,7 @@ def create_sky_mask(img):
     Compute sky mask by using the algorithm from (Shen and Wang, 2013)
 
     :param img: image
-    :return: binary sky mask or None if there is no sky
+    :return: binary sky mask
     """
     # Image Pre-processing and Gradient Image Calculation
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -215,7 +215,7 @@ def create_sky_mask(img):
     # check no sky condition
     if check_no_sky(img, b_opt):
         print("No sky detected")
-        return None
+        return np.zeros((img.shape[0], img.shape[1]))
 
     # check for fake sky
     if check_fake_sky(img, b_opt):
