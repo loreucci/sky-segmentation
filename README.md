@@ -1,3 +1,13 @@
+# sky-segmentation
+
+Two models of sky segmentation:
+
+1. an implementation of [(Shen and Wang, 2013)](https://journals.sagepub.com/doi/pdf/10.5772/56884)
+2. training U-Net for the sky segmentation task
+
+![example](https://github.com/loreucci/sky-segmentation/raw/master/example.png)
+
+
 ## Usage
 
 The two models can be launched with
