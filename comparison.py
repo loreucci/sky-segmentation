@@ -15,7 +15,7 @@ def compute_score(mask, gt):
     :param gt: ground truth
     :return: percentage of wrong pixels (between 0 and 1)
     """
-    return np.sum(np.abs(mask - gt)) / mask.size
+    return np.sum(np.abs(mask - gt)) / mask.size / 255
 
 
 def main():
@@ -39,7 +39,8 @@ def main():
         img_path = f"data/{img_id}.jpg"
         gt_path = f"groundtruth/{img_id}_gt.pgm"
         img = cv2.imread(root_dir + img_path)
-        gt = cv2.imread(root_dir + gt_path)
+        gt = cv2.imread(root_dir + gt_path, cv2.IMREAD_GRAYSCALE)
+        gt[gt > 0] = 255  # some are 0-255, some 0-1
 
         # resize both to 256x256
         h, w, _ = img.shape
@@ -66,8 +67,8 @@ def main():
     # print results
     print(f" CV avg accuracy: {np.mean(scores_cv):.3}% (std={np.std(scores_cv):.3})")
     print(f"CNN avg accuracy: {np.mean(scores_cnn):.3}% (std={np.std(scores_cnn):.3})")
-    print(f" CV avg execution time: {np.mean(times_cv):.3}% (std={np.std(times_cv):.3})")
-    print(f"CNN avg execution time: {np.mean(times_cnn):.3}% (std={np.std(times_cnn):.3})")
+    print(f" CV avg execution time: {np.mean(times_cv):.3}s (std={np.std(times_cv):.3})")
+    print(f"CNN avg execution time: {np.mean(times_cnn):.3}s (std={np.std(times_cnn):.3})")
 
 
 if __name__ == '__main__':
